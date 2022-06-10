@@ -16,16 +16,33 @@ class UI{
                 <strong>Product</strong>: ${product.name} -
                 <strong>Price</strong>: ${product.price} - 
                 <strong>Year</strong>: ${product.year}
+                <a href="#" class="btn btn-danger" name="delete"> Delete </a>
             </div>
         </div>
         `
         productList.appendChild(element); 
     }
-    deleteProduct(){
-
+    resetForm(){
+        document.getElementById('product-form').reset();
+        
     }
-    showMessage(){
-
+    deleteProduct(element){
+        if(element.name === 'delete'){
+            element.parentElement.parentElement.parentElement.remove();
+            this.showMessage('Product deleted succesfully', 'danger');
+        }
+    }
+    showMessage(message, cssClass){
+        const div = document.createElement('div');
+        div.className = `alert alert-${cssClass} mt-2` ;
+        div.appendChild(document.createTextNode(message));
+        //show in DOM
+        const container = document.querySelector('.container');
+        const app = document.querySelector('#App');
+        container.insertBefore(div,app);
+        setTimeout(function(){
+            document.querySelector('.alert').remove();
+        },3000);
     }
 }
 // Dom
@@ -36,7 +53,18 @@ document.getElementById("product-form").addEventListener("submit", function(e){
     const product = new Product(name,price,year);
 
     const ui = new UI();
+
+    if(name === '' || price === '' || year ==='' ){
+       return ui.showMessage('Complete Fields Please', 'danger');
+    }
     ui.addProduct(product);
+    ui.resetForm();
+    ui.showMessage('Product added successfully', 'success');
 
     e.preventDefault();
+});
+
+document.getElementById('product-list').addEventListener('click', function(e){
+    const ui = new UI();
+    ui.deleteProduct(e.target);
 });
